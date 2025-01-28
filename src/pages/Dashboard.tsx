@@ -1,12 +1,23 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast.success('Logged out successfully');
+      navigate('/');
+    } catch (error: any) {
+      console.error('Error logging out:', error.message);
+      toast.error(error.message || 'Failed to logout');
+    }
   };
 
   return (
